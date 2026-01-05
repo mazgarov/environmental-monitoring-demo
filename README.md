@@ -36,6 +36,7 @@ All components are deployed using Docker Compose and exposed through a single Ng
 ---
 
 ## Architecture
+> The following diagram shows the full data flow from a legacy-style HTML source to alert notifications.
 ```
 +------------------+
 |  Web Generator   |
@@ -142,6 +143,7 @@ cd environmental-monitoring-demo
 cp .env.example .env
 docker compose up -d --build
 ```
+Note: The demo uses synthetic data and does not require any external credentials.
 ---
 
 ## Alerts & Notifications
