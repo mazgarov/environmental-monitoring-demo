@@ -5,15 +5,15 @@ services:
     expose:
       - "8000"
     environment:
-      DATA_UPDATE_INTERVAL: 300   # 1 minutes
-      TZ: Asia/Tashkent
+      DATA_UPDATE_INTERVAL: 300   # 5 minutes
+      TZ: ${TZ}
     restart: unless-stopped
 
   exporter:
     build: ./exporter
     container_name: exporter
     environment:
-      TZ: Asia/Tashkent
+      TZ: ${TZ}
       TARGET_URL: http://web-generator:8000
       SCRAPE_INTERVAL: 30
     expose:
@@ -44,7 +44,7 @@ services:
     expose:
       - "3000"
     environment:
-      TZ: Asia/Tashkent
+      TZ: ${TZ}
       GF_USERS_DEFAULT_THEME: light
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
@@ -64,9 +64,8 @@ services:
     image: gotify/server:latest
     container_name: gotify
     environment:
-      TZ: Asia/Tashkent
-      GOTIFY_DEFAULTUSER_NAME: admin
-      GOTIFY_DEFAULTUSER_PASS: admin
+      TZ: ${TZ}
+      GOTIFY_DEFAULTUSER_NAME: demo
     expose:
       - "80"
     volumes:
@@ -78,7 +77,7 @@ services:
     container_name: gotify-adapter
     environment:
       GOTIFY_URL: http://gotify
-      GOTIFY_TOKEN: AnYDPWgFOhBpXyk
+      GOTIFY_TOKEN: ${GOTIFY_TOKEN}
     depends_on:
       - gotify
     restart: unless-stopped
@@ -103,6 +102,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      TZ: ${TZ}
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/html:/usr/share/nginx/html:ro
