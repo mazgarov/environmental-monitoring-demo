@@ -36,7 +36,7 @@ All components are deployed using Docker Compose and exposed through a single Ng
 ---
 
 ## Architecture
-
+```
 +------------------+
 |  Web Generator   |
 |  (HTML table)    |
@@ -73,7 +73,7 @@ All components are deployed using Docker Compose and exposed through a single Ng
 | Gotify Server    |
 | Notifications    |
 +------------------+
-
+```
 Grafana reads metrics directly from Prometheus.
 Nginx exposes all services under a single entry point.
 
@@ -136,12 +136,12 @@ Prerequisites:
 - Docker Compose
 
 Setup:
-
+```
 git clone https://github.com/mazgarov/environmental-monitoring-demo.git
 cd environmental-monitoring-demo
 cp .env.example .env
 docker compose up -d --build
-
+```
 ---
 
 ## Alerts & Notifications
@@ -165,7 +165,7 @@ Alerts are grouped and delivered via Gotify.
 ---
 
 ## Project Structure
-
+```
 .
 ├── docker-compose.yml
 ├── .env.example
@@ -185,7 +185,7 @@ Alerts are grouped and delivered via Gotify.
 │   └── dashboards/
 ├── alertmanager/
 ├── gotify-adapter/
-
+```
 ---
 
 ## Disclaimer
