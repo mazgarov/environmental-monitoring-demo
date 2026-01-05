@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Environmental Monitoring — Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Language switch -->
+  <div class="lang-switch">
+    <button onclick="setLang('uz')">🇺🇿 O‘zbekcha</button>
+    <button onclick="setLang('en')">🇬🇧 English</button>
+    <button onclick="setLang('ru')">🇷🇺 Русский</button>
+  </div>
+
+  <main class="container">
+
+    <h1 data-i18n="title">Environmental Monitoring — Public Demo</h1>
+
+    <p class="subtitle" data-i18n="subtitle">
+      A synthetic, real-time monitoring and alerting demonstration
+    </p>
+
+    <!-- Description -->
+    <section>
+      <h2 data-i18n="about_title">About this project</h2>
+      <p data-i18n="about_text">
+        This demo showcases a complete monitoring stack built with Prometheus,
+        Grafana, Alertmanager, and Gotify. All data is synthetic and generated
+        in real time to simulate environmental conditions such as air quality,
+        temperature, and CO₂ levels.
+      </p>
+    </section>
+
+    <!-- Architecture -->
+    <section>
+      <h2 data-i18n="architecture_title">Architecture overview</h2>
+      <pre class="architecture">
+Synthetic Data Generator
+        ↓
+     Exporter
+        ↓
+   Prometheus
+     ↓       ↓
+  Grafana  Alertmanager
+                 ↓
+              Gotify
+      </pre>
+    </section>
+
+    <!-- Access -->
+    <section>
+      <h2 data-i18n="access_title">Access & limitations</h2>
+
+      <ul>
+        <li>
+          <strong data-i18n="grafana_title">Grafana</strong> —
+          <span data-i18n="grafana_text">
+            Public access, read-only dashboards.
+          </span>
+        </li>
+
+        <li>
+          <strong data-i18n="prometheus_title">Prometheus</strong> —
+          <span data-i18n="prometheus_text">
+            Public access for educational exploration.
+          </span>
+        </li>
+
+        <li>
+          <strong data-i18n="gotify_title">Gotify</strong> —
+          <span data-i18n="gotify_text">
+            Login required. Demo users may delete messages; alerts will reappear
+            automatically.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Credentials -->
+    <section>
+      <h2 data-i18n="credentials_title">Demo credentials</h2>
+      <p data-i18n="credentials_text">
+        Credentials are provided for demonstration purposes only.
+        Please do not use them outside this demo.
+      </p>
+
+      <pre class="credentials">
+Gotify:
+  Login: demo
+  Password: Gotify'sDem0U$serP@$$word
+      </pre>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p data-i18n="footer">
+        © Demo project — All data is synthetic and for educational purposes only.
+      </p>
+    </footer>
+
+  </main>
+
+  <script src="lang.js"></script>
+</body>
+</html>

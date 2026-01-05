@@ -1,0 +1,34 @@
+groups:
+- name: environment-demo-alerts
+  rules:
+
+  # WARNING — AQI degraded (demo: 1 min)
+  - alert: AQIWarning
+    expr: environment_aqi > 150
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "⚠️ AQI Warning"
+      description: "AQI degraded in {{ $labels.region }} (AQI={{ $value }})"
+
+  # CRITICAL — AQI dangerous
+  - alert: AQICritical
+    expr: environment_aqi > 300
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "🚨 AQI Critical"
+      description: "Dangerous AQI in {{ $labels.region }} (AQI={{ $value }})"
+
+  # FAILURE — CO₂ sensor failure
+  - alert: CO2Failure
+    expr: environment_co2_ppm == 0
+    for: 30s
+    labels:
+      severity: failure
+    annotations:
+      summary: "🔥 Sensor Failure"
+      description: "CO₂ sensor failure in {{ $labels.region }}"
+

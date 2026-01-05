@@ -1,0 +1,21 @@
+# env
+.env
+
+# Docker volumes / runtime data
+**/data/
+**/*-data/
+
+# Grafana runtime
+grafana/grafana-data/
+
+# Prometheus runtime
+prometheus/prometheus-data/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS junk
+.DS_Store
+
+

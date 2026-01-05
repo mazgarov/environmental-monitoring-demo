@@ -1,0 +1,114 @@
+services:
+  web-generator:
+    build: ./web-generator
+    container_name: web-generator
+    expose:
+      - "8000"
+    environment:
+      DATA_UPDATE_INTERVAL: 300   # 1 minutes
+      TZ: Asia/Tashkent
+    restart: unless-stopped
+
+  exporter:
+    build: ./exporter
+    container_name: exporter
+    environment:
+      TZ: Asia/Tashkent
+      TARGET_URL: http://web-generator:8000
+      SCRAPE_INTERVAL: 30
+    expose:
+      - "9100"
+    depends_on:
+      - web-generator
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus-data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-lifecycle"
+    expose:
+      - "9090"
+    depends_on:
+      - exporter
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    expose:
+      - "3000"
+    environment:
+      TZ: Asia/Tashkent
+      GF_USERS_DEFAULT_THEME: light
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_EXPLORE_ENABLED: "false"
+      GF_ALERTING_ENABLED: "false"
+    volumes:
+      - ./grafana/grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  gotify:
+    image: gotify/server:latest
+    container_name: gotify
+    environment:
+      TZ: Asia/Tashkent
+      GOTIFY_DEFAULTUSER_NAME: admin
+      GOTIFY_DEFAULTUSER_PASS: admin
+    expose:
+      - "80"
+    volumes:
+      - ./gotify/data:/app/data
+    restart: unless-stopped
+
+  gotify-adapter:
+    build: ./gotify-adapter
+    container_name: gotify-adapter
+    environment:
+      GOTIFY_URL: http://gotify
+      GOTIFY_TOKEN: AnYDPWgFOhBpXyk
+    depends_on:
+      - gotify
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./alertmanager/alertmanager-data:/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    expose:
+      - "9093"
+    depends_on:
+      - gotify
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+    depends_on:
+      - web-generator
+      - grafana
+      - gotify
+      - prometheus
+    restart: unless-stopped

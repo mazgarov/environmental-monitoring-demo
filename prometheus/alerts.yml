@@ -1,0 +1,39 @@
+groups:
+- name: environment-demo-alerts
+  rules:
+
+  - alert: AQICritical
+    expr: environment_aqi > 300
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Critical AQI in {{ $labels.region }}"
+      description: "AQI is {{ $value }} (>300)"
+
+  - alert: AQIWarning
+    expr: environment_aqi > 150
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "High AQI in {{ $labels.region }}"
+      description: "AQI is {{ $value }} (>150)"
+
+  - alert: CO2SensorFailure
+    expr: environment_co2_ppm == 0
+    for: 15s
+    labels:
+      severity: failure
+    annotations:
+      summary: "CO₂ sensor failure in {{ $labels.region }}"
+      description: "CO₂ value dropped to 0"
+
+  - alert: CO2SuddenSpike
+    expr: abs(environment_co2_delta) > 400
+    for: 15s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Sudden CO₂ spike in {{ $labels.region }}"
+      description: "CO₂ delta is {{ $value }}"
