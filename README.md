@@ -144,6 +144,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 Note: The demo uses synthetic data and does not require any external credentials.
+
 ---
 
 ## Alerts & Notifications
