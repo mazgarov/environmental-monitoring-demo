@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "description": "Air Quality Index per region",
       "fieldConfig": {
@@ -108,7 +108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "bf8hbk8mvn4zke"
+            "uid": "Prometheus"
           },
           "editorMode": "code",
           "expr": "environment_aqi",
@@ -124,7 +124,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -243,7 +243,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "description": "Which sensors are broken right now?",
       "fieldConfig": {
@@ -358,7 +358,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "description": "Where did CO₂ change suddenly?",
       "fieldConfig": {
@@ -457,7 +457,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "description": "Who experienced the strongest AQI jumps recently?",
       "fieldConfig": {
@@ -576,7 +576,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "bf8hbk8mvn4zke"
+        "uid": "Prometheus"
       },
       "description": "When exactly did spike events happen?",
       "fieldConfig": {
