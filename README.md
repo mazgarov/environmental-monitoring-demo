@@ -118,6 +118,20 @@ Nginx exposes all services under a single entry point.
 
 ---
 
+### Grafana Dashboard
+
+The dashboard is provisioned automatically.
+
+- Dashboard UID: `ads5mtp`
+- Default URL pattern: `/d/ads5mtp`
+
+
+Examples:
+- Local: http://grafana.localhost/d/ads5mtp
+- Production: https://grafana.weather-demo.uz-net.net/d/ads5mtp
+
+---
+
 ## Demo Access (Local)
 
 Service paths via Nginx:
