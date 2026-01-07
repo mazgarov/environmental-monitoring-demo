@@ -1,210 +1,225 @@
-# Environmental Monitoring Demo
-Prometheus · Grafana · Alertmanager · Gotify · Docker Compose
+# 🌍 Environmental Monitoring Demo
+**Prometheus · Grafana · Alertmanager · Gotify · Nginx · Docker**
 
-This repository contains a fully working monitoring demo that shows how data from a non-instrumented, legacy-style HTML source can be integrated into a modern observability stack using open-source tools.
+A complete, self-contained **observability demo** that shows how *synthetic environmental data* can be monitored, visualized, alerted on, and presented via a secure public-facing interface.
 
-The goal of this project is to demonstrate practical integration, not synthetic “hello world” metrics.
-
----
-
-## Overview
-
-The demo simulates environmental metrics (temperature, air quality index, CO₂ levels) published as a periodically updated HTML table.
-
-These values are:
-
-1. Scraped by a custom Python exporter
-2. Collected by Prometheus
-3. Visualized in Grafana dashboards
-4. Evaluated by alerting rules
-5. Sent as notifications via Gotify
-
-All components are deployed using Docker Compose and exposed through a single Nginx entry point.
+This project is designed as a **technical demo / portfolio project**, not a production system.
 
 ---
 
-## What This Demo Demonstrates
+## ✨ Why this project exists
 
-- Exporting metrics from an HTML table (legacy / external system style)
-- Prometheus scraping and rule evaluation
-- Grafana dashboards with rankings and delta-based views
-- Alerting using both threshold and change-based logic
-- Alert notifications delivered to Gotify
-- Read-only / demo-friendly access patterns
-- Reproducible local and VPS-ready deployment
+Many real-world systems:
+- were built years ago,
+- are proprietary or closed,
+- were never designed for Prometheus / Grafana,
+- cannot be easily rewritten.
 
----
+This demo shows that:
 
-## Architecture
-> The following diagram shows the full data flow from a legacy-style HTML source to alert notifications.
-```
-+------------------+
-|  Web Generator   |
-|  (HTML table)    |
-+--------+---------+
-         |
-         | HTTP scrape
-         v
-+------------------+
-| Python Exporter  |
-| /metrics         |
-+--------+---------+
-         |
-         | Prometheus scrape
-         v
-+------------------+
-|  Prometheus      |
-|  Rules & Alerts  |
-+--------+---------+
-         |
-         | Alerts
-         v
-+------------------+
-| Alertmanager     |
-+--------+---------+
-         |
-         | Webhook
-         v
-+------------------+
-| Gotify Adapter   |
-+--------+---------+
-         |
-         v
-+------------------+
-| Gotify Server    |
-| Notifications    |
-+------------------+
-```
-Grafana reads metrics directly from Prometheus.
-Nginx exposes all services under a single entry point.
+> **Even legacy or closed systems can be integrated into a modern observability stack without rewriting them.**
+
+By using:
+- scraping,
+- adapters,
+- smart alert grouping,
+- and careful exposure,
+
+we can **extend the life and visibility of existing systems**.
 
 ---
 
-## Components
+## 🧱 Architecture Overview
 
-### Web Generator
-- Generates synthetic environmental data
-- Updates values periodically
-- Publishes data as an HTML table
 
-### Exporter
-- Scrapes the HTML table
-- Converts values into Prometheus metrics
-- Handles table structure changes via header-based parsing
+All UI is exposed through a single Nginx entry point
 
-### Prometheus
-- Scrapes exporter metrics
-- Evaluates alert rules
-- Stores time-series data
-
-### Grafana
-- Visualizes metrics and rankings
-- Anonymous, read-only access
-- Embedded dashboards for demo use
-
-### Alertmanager
-- Groups and routes alerts
-- Sends notifications via webhook
-
-### Gotify
-- Receives alerts as messages
-- Used as an instant notification channel
-
-### Nginx
-- Single entry point
-- Serves overview and static content
-- Proxies internal services
-- Designed for future HTTPS support
 
 ---
 
-### Grafana Dashboard
+## 🧪 What data is simulated?
+
+For each region, the generator produces:
+
+- 🌡 Temperature (°C)
+- 🌫 Air Quality Index (AQI)
+- 🧪 CO₂ concentration (ppm)
+
+Behavior includes:
+- gradual changes,
+- random spikes,
+- sensor failures (CO₂ = 0),
+- recovery events.
+
+This makes dashboards and alerts feel **realistic**, not random.
+
+---
+
+## 📊 Dashboards (Grafana)
 
 The dashboard is provisioned automatically.
 
 - Dashboard UID: `ads5mtp`
 - Default URL pattern: `/d/ads5mtp`
 
-
 Examples:
 - Local: http://grafana.localhost/d/ads5mtp
 - Production: https://grafana.weather-demo.uz-net.net/d/ads5mtp
 
+Key panels:
+- AQI trends (all regions)
+- Top-5 AQI right now
+- CO₂ sensor failures
+- CO₂ sudden deltas
+- AQI spike history
+
+Grafana is:
+- anonymous (read-only),
+- embedded safely,
+- alerts disabled (Alertmanager is used instead).
+
 ---
 
-## Demo Access (Local)
+## 🚨 Alerting model
 
-Service paths via Nginx:
+Alerts are evaluated in **Prometheus**, routed via **Alertmanager**, and delivered using **Gotify**.
 
-- Overview: /
-- Synthetic Data: /data/
-- Grafana: external window
-- Prometheus: /prometheus/
-- Gotify: /gotify/
+Alert types include:
+- AQI warning / critical
+- CO₂ sensor failure
+- Sudden CO₂ or AQI spikes
+
+### Noise reduction strategy
+- Alerts are **grouped**
+- Repeats are limited
+- Resolve messages are sent
+- “Still firing” spam is avoided
 
 ---
 
-## Running Locally
+## 🔔 Notifications (Gotify)
 
-Prerequisites:
-- Docker
-- Docker Compose
+Gotify is used as a **lightweight instant notification system**.
 
-Setup:
+- Alertmanager sends events to a custom adapter
+- Adapter formats messages (severity, emoji, values)
+- Messages are delivered to Gotify apps / UI
+
+⚠️ This is **Option A**:
+- Users log in to Gotify directly
+- Viewer users can see messages
+- Message deletion is possible (acceptable for demo)
+
+---
+
+## 🌐 Public Web Interface
+
+Everything is accessible from a single entry point:
+
+- `/` → Overview (project explanation, multilingual)
+- `/data/` → Synthetic live data
+- Grafana → opened in new tab
+- Prometheus → optional, advanced users
+- Gotify → login required
+
+Nginx is responsible for:
+- routing,
+- security headers,
+- HTTPS termination,
+- static content delivery.
+
+---
+
+## 🔐 Security model (Demo-appropriate)
+
+This project is **intentionally not hardened like production**.
+
+What *is* done:
+- No exposed databases
+- No credentials in Git
+- Anonymous Grafana is read-only
+- Prometheus UI is optional
+- HTTPS enabled
+- Secrets via `.env`
+
+What is *not* done:
+- RBAC everywhere
+- OAuth / SSO
+- Network policies
+
+This balance is **intentional for an educational demo**.
+
+---
+
+## 🗂 Project Structure
+
+
+
+---
+
+## ▶️ Running locally
+
 ```
-git clone https://github.com/mazgarov/environmental-monitoring-demo.git
-cd environmental-monitoring-demo
 cp .env.example .env
 docker compose up -d --build
+
+Then open:
+
+http://localhost
 ```
-Note: The demo uses synthetic data and does not require any external credentials.
 
 ---
 
-## Alerts & Notifications
+## 🌍 Deployment
 
-Implemented alerts include:
-- AQI warning and critical thresholds
-- CO₂ sensor failure detection
-- Sudden CO₂ spikes (delta-based)
+Tested on:
 
-Alerts are grouped and delivered via Gotify.
+VPS (Ubuntu)
+
+Docker Compose
+
+Nginx + Let’s Encrypt
+
+Important notes:
+
+Update Grafana root URL for your domain
+
+Ensure correct file permissions on volumes
+
+Restart containers after changing .env
 
 ---
 
-## Security Notes (Demo Scope)
+## 🎯 Who this is for
 
-- Grafana is read-only (anonymous viewer)
-- Prometheus UI is exposed for educational purposes
-- No authentication hardening is applied
-- Synthetic data only
+DevOps engineers
+
+Monitoring / SRE learners
+
+Architects evaluating observability patterns
+
+Anyone building demos or PoCs
 
 ---
 
-## Project Structure
-```
-.
-├── docker-compose.yml
-├── .env.example
-├── nginx/
-│   ├── nginx.conf
-│   └── html/
-│       ├── index.html
-│       └── overview/
-├── web-generator/
-├── exporter/
-├── prometheus/
-│   ├── prometheus.yml
-│   ├── alerts.yml
-│   └── rules/
-├── grafana/
-│   ├── provisioning/
-│   └── dashboards/
-├── alertmanager/
-├── gotify-adapter/
-```
+## 📌 Final note
+
+This project is not about tools.
+
+It’s about thinking in systems:
+
+separation of concerns,
+
+minimal invasiveness,
+
+observability without rewrite.
+
 ---
 
-## Disclaimer
+Author:
 
-This project uses synthetic data and is intended for demonstration and educational purposes only.
+Bakhtiyor Mazgarov
+
+GitHub: https://github.com/mazgarov
+
+
