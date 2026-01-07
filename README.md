@@ -1,43 +1,39 @@
 # 🌍 Environmental Monitoring Demo
+
 **Prometheus · Grafana · Alertmanager · Gotify · Nginx · Docker**
 
-A complete, self-contained **observability demo** that shows how *synthetic environmental data* can be monitored, visualized, alerted on, and presented via a secure public-facing interface.
+A complete end-to-end **observability demo** that shows how synthetic environmental data can be generated, scraped, visualized, alerted on, and exposed through a secure web interface.
 
-This project is designed as a **technical demo / portfolio project**, not a production system.
+This project is designed as a **technical demo / portfolio project**, not a production monitoring system.
 
 ---
 
-## ✨ Why this project exists
+## ✨ Motivation
 
 Many real-world systems:
-- were built years ago,
-- are proprietary or closed,
-- were never designed for Prometheus / Grafana,
-- cannot be easily rewritten.
 
-This demo shows that:
+- were built years ago  
+- are proprietary or closed  
+- were never designed for Prometheus or Grafana  
+- cannot be easily rewritten  
+
+This demo demonstrates that:
 
 > **Even legacy or closed systems can be integrated into a modern observability stack without rewriting them.**
 
-By using:
-- scraping,
-- adapters,
-- smart alert grouping,
-- and careful exposure,
-
-we can **extend the life and visibility of existing systems**.
+By carefully using exporters, adapters, and existing open-source tools, we can extend the life and visibility of existing systems.
 
 ---
 
 ## 🧱 Architecture Overview
 
+---
 
-All UI is exposed through a single Nginx entry point
-
+All user access is routed through **Nginx** as a single entry point.
 
 ---
 
-## 🧪 What data is simulated?
+## 🧪 Synthetic Data
 
 For each region, the generator produces:
 
@@ -45,181 +41,192 @@ For each region, the generator produces:
 - 🌫 Air Quality Index (AQI)
 - 🧪 CO₂ concentration (ppm)
 
-Behavior includes:
-- gradual changes,
-- random spikes,
-- sensor failures (CO₂ = 0),
-- recovery events.
+The data intentionally includes:
 
-This makes dashboards and alerts feel **realistic**, not random.
+- gradual changes  
+- random spikes  
+- sensor failures (CO₂ = 0)  
+- recoveries  
+
+This makes dashboards and alerts behave realistically.
 
 ---
 
-## 📊 Dashboards (Grafana)
+## 📊 Grafana Dashboards
 
-The dashboard is provisioned automatically.
+Dashboards are **provisioned automatically** on startup.
 
-- Dashboard UID: `ads5mtp`
-- Default URL pattern: `/d/ads5mtp`
+Key panels include:
 
-Examples:
-- Local: http://grafana.localhost/d/ads5mtp
-- Production: https://grafana.weather-demo.uz-net.net/d/ads5mtp
-
-Key panels:
 - AQI trends (all regions)
-- Top-5 AQI right now
+- Top-5 AQI (current)
 - CO₂ sensor failures
 - CO₂ sudden deltas
 - AQI spike history
 
-Grafana is:
-- anonymous (read-only),
-- embedded safely,
-- alerts disabled (Alertmanager is used instead).
+Grafana is configured as:
+
+- anonymous access (Viewer)
+- read-only
+- embeddable
+- no alerting (Alertmanager is used instead)
 
 ---
 
-## 🚨 Alerting model
+## 🚨 Alerting
 
-Alerts are evaluated in **Prometheus**, routed via **Alertmanager**, and delivered using **Gotify**.
+Alert rules are evaluated in **Prometheus** and routed via **Alertmanager**.
 
 Alert types include:
+
 - AQI warning / critical
 - CO₂ sensor failure
-- Sudden CO₂ or AQI spikes
+- Sudden AQI or CO₂ spikes
 
-### Noise reduction strategy
-- Alerts are **grouped**
-- Repeats are limited
-- Resolve messages are sent
-- “Still firing” spam is avoided
+Alert noise is reduced using:
+
+- grouping
+- repeat intervals
+- resolve notifications
 
 ---
 
 ## 🔔 Notifications (Gotify)
 
-Gotify is used as a **lightweight instant notification system**.
+Notifications are delivered using **Gotify**.
 
-- Alertmanager sends events to a custom adapter
-- Adapter formats messages (severity, emoji, values)
-- Messages are delivered to Gotify apps / UI
+Flow:
 
-⚠️ This is **Option A**:
-- Users log in to Gotify directly
-- Viewer users can see messages
-- Message deletion is possible (acceptable for demo)
+Alertmanager → Gotify Adapter → Gotify Server
+
+Features:
+
+- severity-based messages
+- emoji indicators
+- resolved notifications
+- demo-friendly configuration
+
+For the public demo, users log in directly to Gotify (Option A).
 
 ---
 
-## 🌐 Public Web Interface
+## 🌐 Web Interface
 
-Everything is accessible from a single entry point:
+All access is provided through a single Nginx endpoint:
 
-- `/` → Overview (project explanation, multilingual)
+- `/` → Overview page (multilingual)
 - `/data/` → Synthetic live data
-- Grafana → opened in new tab
+- Grafana → opened in a new tab
 - Prometheus → optional, advanced users
 - Gotify → login required
 
-Nginx is responsible for:
-- routing,
-- security headers,
-- HTTPS termination,
-- static content delivery.
-
 ---
 
-## 🔐 Security model (Demo-appropriate)
+## 🔐 Security Notes (Demo Scope)
 
-This project is **intentionally not hardened like production**.
+This project is **not production-hardened by design**.
 
 What *is* done:
-- No exposed databases
-- No credentials in Git
+
+- No secrets committed to Git
 - Anonymous Grafana is read-only
-- Prometheus UI is optional
-- HTTPS enabled
-- Secrets via `.env`
+- Prometheus is optionally exposed
+- HTTPS enabled via Let’s Encrypt
+- Secrets provided via `.env`
 
-What is *not* done:
-- RBAC everywhere
+What *is not* done:
+
 - OAuth / SSO
-- Network policies
+- Fine-grained RBAC everywhere
+- Network isolation policies
 
-This balance is **intentional for an educational demo**.
+This balance is intentional for educational clarity.
 
 ---
 
 ## 🗂 Project Structure
-
-
+```
+.
+├── docker-compose.yml
+├── .env.example
+├── web-generator/
+├── exporter/
+├── prometheus/
+│ ├── prometheus.yml
+│ ├── alerts.yml
+│ └── prometheus-data/
+├── grafana/
+│ ├── dashboards/
+│ ├── provisioning/
+│ └── grafana-data/
+├── alertmanager/
+│ ├── alertmanager.yml
+│ └── alertmanager-data/
+├── gotify/
+│ └── data/
+├── gotify-adapter/
+├── nginx/
+│ ├── nginx.conf
+│ └── html/
+│ ├── index.html
+│ └── overview/
+│ ├── index.html
+│ ├── style.css
+│ └── lang.js
+└── README.md
+```
 
 ---
 
-## ▶️ Running locally
-
+## ▶️ Running Locally
 ```
 cp .env.example .env
 docker compose up -d --build
-
-Then open:
-
-http://localhost
 ```
+Open:
+http://localhost
 
 ---
 
-## 🌍 Deployment
+## 🌍 Deployment Notes
 
 Tested on:
 
-VPS (Ubuntu)
+- Ubuntu VPS
+- Docker Compose
+- Nginx + Let’s Encrypt
 
-Docker Compose
+Important points:
 
-Nginx + Let’s Encrypt
-
-Important notes:
-
-Update Grafana root URL for your domain
-
-Ensure correct file permissions on volumes
-
-Restart containers after changing .env
+- Update Grafana root URL for your domain
+- Ensure correct volume permissions
+- Restart containers after `.env` changes
 
 ---
 
-## 🎯 Who this is for
+## 🎯 Audience
 
-DevOps engineers
+This project is useful for:
 
-Monitoring / SRE learners
-
-Architects evaluating observability patterns
-
-Anyone building demos or PoCs
-
----
-
-## 📌 Final note
-
-This project is not about tools.
-
-It’s about thinking in systems:
-
-separation of concerns,
-
-minimal invasiveness,
-
-observability without rewrite.
+- DevOps engineers
+- SRE / monitoring learners
+- Architects evaluating observability patterns
+- Portfolio and demo purposes
 
 ---
 
-Author:
+## 📌 Final Thought
 
-Bakhtiyor Mazgarov
+This demo is not about tools.
 
+It is about **system thinking**:
+
+- minimal invasiveness
+- clear separation of concerns
+- observability without rewriting systems
+
+---
+
+**Author:**  
+Bakhtiyor Mazgarov  
 GitHub: https://github.com/mazgarov
-
-
