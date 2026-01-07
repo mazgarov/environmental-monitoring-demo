@@ -259,6 +259,16 @@ It is about **system thinking**:
 
 ---
 
+## Analytics in public demo
+
+The hosted demo uses Umami (privacy-friendly analytics)
+to understand interest and usage patterns.
+
+Analytics is enabled **only in the public demo**
+and is **not included** in this repository.
+
+---
+
 **Author:**  
 Bakhtiyor Mazgarov  
 GitHub: https://github.com/mazgarov
